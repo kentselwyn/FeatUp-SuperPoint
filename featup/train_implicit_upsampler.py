@@ -68,9 +68,9 @@ def my_app(cfg: DictConfig) -> None:
     print(cfg.output_root)
     seed_everything(0)
 
-    input_size_h = 224
-    input_size_w = 224
-    final_size = 14
+    input_size_h = 640
+    input_size_w = 480
+    final_size = 80
     redo = False
 
     steps = cfg.steps
@@ -99,6 +99,11 @@ def my_app(cfg: DictConfig) -> None:
         kernel_size = 35
         featurize_batch_size = 16
         steps = 500
+    elif cfg.model_type == "superpoint":
+        multiplier = 1
+        featurize_batch_size = 2
+        kernel_size = 15  # Smaller kernel for 8x downsampling
+        final_size = 80   # Appropriate size for SuperPoint features
     else:
         raise ValueError(f"Unknown model type {cfg.model_type}")
 
@@ -253,7 +258,7 @@ def my_app(cfg: DictConfig) -> None:
                     target.append(jit_features[idx].unsqueeze(0))
                     selected_tp = {k: v[idx] for k, v in transform_params.items()}
                     hr_feats_transformed.append(apply_jitter(hr_both, cfg.max_pad, selected_tp))
-
+                
                 target = torch.cat(target, dim=0).cuda(non_blocking=True)
                 hr_feats_transformed = torch.cat(hr_feats_transformed, dim=0)
 

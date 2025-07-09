@@ -1,19 +1,31 @@
+# 7Scenes Configuration for FeatUp Implicit Upsampler
+# Example configuration for training on 7Scenes chess scene
+
 # Environment Args
 output_root: '../../'
-pytorch_data_dir: '/pytorch-data'
+pytorch_data_dir: '/mnt/home_6T/public/kentselwyn/'  # Should contain 7_scenes/ folder
 submitting_to_aml: false
 summarize: true
-experiment_name: "exp1"
+experiment_name: "7scenes_chess_exp"
 
-# Dataset args
-dataset: "sample"
-split: "val"
+# Dataset args - 7Scenes specific
+dataset: "7scenes_chess"  # Format: 7scenes_[scene_name]
+split: "train"            # "train" or "test"
 partition: 0
 total_partitions: 1
 
+# Available scenes:
+# - 7scenes_chess
+# - 7scenes_fire  
+# - 7scenes_heads
+# - 7scenes_office
+# - 7scenes_pumpkin
+# - 7scenes_redkitchen
+# - 7scenes_stairs
+
 # Model Args
-model_type: "maskclip"
-activation_type: "token"
+model_type: "superpoint"  # Can use any supported model
+activation_type: "key"
 
 # Upsampler args
 outlier_detection: True
@@ -22,7 +34,7 @@ blur_attn: True
 mag_tv_weight: 0.05
 mag_weight: 0.001
 color_feats: true
-pca_batch: 50
+pca_batch: 20
 proj_dim: 128
 max_pad: 30
 use_flips: true
@@ -34,11 +46,10 @@ use_norm: false
 
 # Training args
 steps: 1200
-n_images: 3000
+n_images: 1000
 
 # No need to change
 hydra:
   run:
     dir: "."
   output_subdir: ~
-

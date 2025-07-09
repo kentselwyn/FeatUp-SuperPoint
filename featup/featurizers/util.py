@@ -68,6 +68,11 @@ def get_featurizer(name, activation_type="key", **kwargs):
         model = DeepLabV3Featurizer(model)
         patch_size = 1
         dim = 2048
+    elif name == "superpoint":
+        from .SuperPointFeaturizer import SuperPointFeaturizer
+        model = SuperPointFeaturizer()
+        patch_size = 8  # SuperPoint downsamples by 8x
+        dim = 256  # SuperPoint descriptor dimension
     else:
         raise ValueError("unknown model: {}".format(name))
     return model, patch_size, dim

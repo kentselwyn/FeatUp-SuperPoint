@@ -2,6 +2,7 @@ from torch.utils.data import Dataset
 from featup.datasets.ImageNetSubset import ImageNetSubset
 from featup.datasets.COCO import Coco
 from featup.datasets.DAVIS import DAVIS
+from featup.datasets.SevenScenes import SevenScenes
 from featup.datasets.SampleImage import SampleImage
 
 
@@ -48,6 +49,10 @@ def get_dataset(dataroot, name, split, transform, target_transform, include_labe
         return Coco(dataroot, split, transform, target_transform, include_labels=include_labels)
     elif name.startswith('davis_'):
         return DAVIS(dataroot, name.split("_")[-1], transform)
+    elif name.startswith('7scenes_'):
+        # Format: 7scenes_[scene_name]
+        scene_name = name.split("_", 1)[1]  # Get everything after first underscore
+        return SevenScenes(dataroot, scene_name, split, transform, target_transform, include_labels)
     elif name == "sample":
         return SampleImage(
             paths=["../sample-images/bird_left.jpg",

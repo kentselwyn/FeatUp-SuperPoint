@@ -56,11 +56,13 @@ class AttentionDownsampler(torch.nn.Module):
         else:
             inputs = hr_feats
 
-        stride = (h - self.kernel_size) // (self.final_size - 1)
-
-        patches = torch.nn.Unfold(self.kernel_size, stride=stride)(inputs) \
+        # stride = (h - self.kernel_size) // (self.final_size - 1)
+        stride = h // self.final_size
+        padding = max(0, (self.kernel_size - stride + 1) // 2)
+        
+        patches = torch.nn.Unfold(self.kernel_size, padding=padding, stride=stride)(inputs) \
             .reshape(
-            (b, self.in_dim, self.kernel_size * self.kernel_size, self.final_size, self.final_size * int(w / h))) \
+            (b, self.in_dim, self.kernel_size * self.kernel_size, self.final_size, int(self.final_size * w / h))) \
             .permute(0, 3, 4, 2, 1)
 
         patch_logits = self.attention_net(patches).squeeze(-1)
